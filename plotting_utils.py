@@ -11,8 +11,12 @@ References:
     b) https://matplotlib.org/gallery/style_sheets/style_sheets_reference.html
 2) Pandas
     a)https://pandas.pydata.org/pandas-docs/version/0.23.4/visualization.html
-3) Colormaps:
-    1) https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
+3) Seaborn
+    a) https://seaborn.pydata.org/tutorial.html
+    b) https://seaborn.pydata.org/examples/index.html
+4) Colormaps:
+    a) https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
+    b) https://seaborn.pydata.org/tutorial/color_palettes.html
 
 Created on Mon Jan 27 12:39:06 2020
 
@@ -27,8 +31,8 @@ import numpy as np
 
 class Plotting(object):
     """
-    Class for personalized plotting functions. Used mainly to change default 
-    values, font preferences across a project
+    Class for personalized plotting functions. Use as a template to change  
+    default values, font and color palette preferences across a project
     """
     ##########################################################################
     def __init__(self):
@@ -49,7 +53,7 @@ class Plotting(object):
         mpl.rc('lines',linewidth=3.0)
         
         mpl.rc('axes',labelsize=label_size,linewidth=0.8,edgecolor='0.25')
-        # if box is not needed
+        # remove box
         #mpl.rc('axes.spines',top=False,right=False)
         
         mpl.rc('xtick',labelsize=tick_size)
@@ -60,6 +64,7 @@ class Plotting(object):
         # Font: cm font for all text, change mathtext to cm
         # Note: 
         # Use mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')
+        # to find fonts on the system
         # If CMU fonts are missing:
         # $brew tap homebrew/cask-fonts
         # $brew cask install font-computer-modern
@@ -97,6 +102,11 @@ class Plotting(object):
         plt.title('Shifted sine plots')
         
         plt.show()
+    ##########################################################################
+        
+    ##########################################################################
+    ###                     I - DATA EXPLORATION                           ###
+    ##########################################################################
         
     ##########################################################################
     def plot_pandas_histogram(self, dataframe, fig_size=(20,20)):
@@ -115,6 +125,7 @@ class Plotting(object):
         """
         dataframe.hist(bins=50,figsize=fig_size)
         plt.show()
+        
     ##########################################################################
     def plot_pandas_scatter_plot(self,dataframe,x_series,y_series,
                                  size, size_label,color):
@@ -129,14 +140,14 @@ class Plotting(object):
         size : series, determines size of scatter dot
         size_label: str, defines legend string
         color : str, determines color of scatter dot from series
-        
-        eg.
-        myplot.plot_pandas_scatter_plot(housing_data,'latitude','longitude',
-        housing_data["population"]/100., 'population', 'median_house_value')
-        
+                
         Returns
         -------
         None.
+
+        eg.
+        myplot.plot_pandas_scatter_plot(housing_data,'latitude','longitude',
+        housing_data['population']/100., 'population', 'median_house_value')
 
         """
         # Jet is not a great colormap
@@ -157,18 +168,48 @@ class Plotting(object):
         dataframe : pandas dataframe
         fig_size: tuple, width x height
         
-        
-        eg.
-        attributes = ["median_house_value","median_income","total_rooms"]
-        myplot.plot_pandas_scatter_matrix(housing_data[attributes])
-        
         Returns
         -------
         None.
 
+        eg.
+        attributes = ["median_house_value","median_income","total_rooms"]
+        myplot.plot_pandas_scatter_matrix(housing_data[attributes])
         """
         pd.plotting.scatter_matrix(dataframe,figsize=fig_size,diagonal='kde')
         plt.show()
+    
+    ##########################################################################
+    def plot_sns_scatter_matrix(self,dataframe,hue_str=None,diag_plt='kde'):
+        """
+        Pair-wise scatter plot between variables in data. Plots on diagonal
+        can be histogram or kde.
+
+        Parameters
+        ----------
+        dataframe : pandas dataframe
+        hue_str : str, optional
+             Column name in dataframe to use for color. Default is None
+        diag_plt : str, optional
+            Type of plot on diagonal('hist','kde'). The default is 'kde'.
+
+        Returns
+        -------
+        None.
         
         
+        eg.
+        iris = sns.load_dataset('iris')
+        myplot.plot_sns_scatter_matrix(iris,'species')
+        """
+        # Using pairplot
+        # Note: PairGrid is much more flexible than pairplot but also 
+        # considerably slower
+        sns.pairplot(dataframe, hue=hue_str, palette='viridis', 
+                     kind='scatter', diag_kind=diag_plt, height=2.5)
         
+        plt.show()
+        
+    ##########################################################################
+    ###                    II - MODEL VISUALIZATION                        ###
+    ##########################################################################

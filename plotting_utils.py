@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Plotting: Central repository for plots
+Uses:
 1) Templates for plot types
-2) Personalize style
+2) Personalized style
 
 References:
 1) Matplotlib
@@ -44,15 +45,16 @@ class Plotting(object):
         None.
         """
         
-        font_size = 16
-        label_size = 14
-        tick_size = label_size - 2
+        font_size = 14
+        label_size = 18
+        tick_size = 12
         
         plt.style.use('seaborn')
         
         mpl.rc('lines',linewidth=3.0)
         
-        mpl.rc('axes',labelsize=label_size,linewidth=0.8,edgecolor='0.25')
+        mpl.rc('axes', titlesize=label_size, labelsize=label_size,
+               linewidth=0.8,edgecolor='0.25')
         # remove box
         #mpl.rc('axes.spines',top=False,right=False)
         
@@ -71,7 +73,7 @@ class Plotting(object):
         font_style = {'family' : 'sans-serif',
                 'sans-serif' : ['CMU Sans Serif'],
                 'size': font_size}
-        mpl.rc('font',**font_style)
+        mpl.rc('font', **font_style)
         
         # Install latex packages: type1cm, dvipng
         # Issues: special char such as _ are not read correctly until '\' is
@@ -109,7 +111,7 @@ class Plotting(object):
     ##########################################################################
         
     ##########################################################################
-    def plot_pandas_histogram(self, dataframe, fig_size=(20,20)):
+    def pandas_histogram(self, dataframe, fig_size=(20,20)):
         """
         histogram from pandas dataframe or series
 
@@ -127,8 +129,8 @@ class Plotting(object):
         plt.show()
         
     ##########################################################################
-    def plot_pandas_scatter_plot(self,dataframe,x_series,y_series,
-                                 size, size_label,color):
+    def pandas_scatter_plot(self,dataframe,x_series,y_series, size, 
+                            size_label,color):
         """
         
 
@@ -146,7 +148,7 @@ class Plotting(object):
         None.
 
         eg.
-        myplot.plot_pandas_scatter_plot(housing_data,'latitude','longitude',
+        myplot.pandas_scatter_plot(housing_data,'latitude','longitude',
         housing_data['population']/100., 'population', 'median_house_value')
 
         """
@@ -159,7 +161,7 @@ class Plotting(object):
         plt.show()
     
     ##########################################################################
-    def plot_pandas_scatter_matrix(self, dataframe, fig_size=(12,12)):
+    def pandas_scatter_matrix(self, dataframe, fig_size=(12,12)):
         """
         Tool for data exploration, observing correlations
 
@@ -174,13 +176,13 @@ class Plotting(object):
 
         eg.
         attributes = ["median_house_value","median_income","total_rooms"]
-        myplot.plot_pandas_scatter_matrix(housing_data[attributes])
+        myplot.pandas_scatter_matrix(housing_data[attributes])
         """
         pd.plotting.scatter_matrix(dataframe,figsize=fig_size,diagonal='kde')
         plt.show()
     
     ##########################################################################
-    def plot_sns_scatter_matrix(self,dataframe,hue_str=None,diag_plt='kde'):
+    def sns_scatter_matrix(self,dataframe,hue_str=None,diag_plt='kde'):
         """
         Pair-wise scatter plot between variables in data. Plots on diagonal
         can be histogram or kde.
@@ -200,7 +202,7 @@ class Plotting(object):
         
         eg.
         iris = sns.load_dataset('iris')
-        myplot.plot_sns_scatter_matrix(iris,'species')
+        myplot.sns_scatter_matrix(iris,'species')
         """
         # Using pairplot
         # Note: PairGrid is much more flexible than pairplot but also 
@@ -208,6 +210,120 @@ class Plotting(object):
         sns.pairplot(dataframe, hue=hue_str, palette='viridis', 
                      kind='scatter', diag_kind=diag_plt, height=2.5)
         
+        plt.show()
+    
+    ##########################################################################
+    def sns_lineplot(self,dataframe, x_name=None, y_name=None, hue_str=None):
+        """
+        Line plot
+
+        Parameters
+        ----------
+        dataframe : dataframe
+            data container
+        x_name : str, optional
+            column name for the x-axis. The default is None.
+        y_name : str, optional
+            column name for the y-axis. The default is None.
+        hue_str : str, optional
+            name of categorical data to color by. The default is None.
+
+        Returns
+        -------
+        None.
+        
+        eg. 
+        df = pd.DataFrame(dict(time=np.arange(500),
+                          value=np.random.randn(500).cumsum()))
+        myplot.sns_lineplot(df,'time','value')
+        """
+        
+        sns.lineplot(data=dataframe, x=x_name, y=y_name, hue=hue_str)
+        plt.show()
+    
+    ##########################################################################
+    def sns_boxenplot(self, dataframe, x_name=None, y_name=None, hue_str=None):
+        """
+        Boxenplot - similar to box plots but provides more information about
+        the distribution as it plots more quantiles. Useful for large datasets
+
+        Parameters
+        ----------
+        dataframe : dataframe
+            data container
+        x_name : str, optional
+            column name for the x-axis. The default is None.
+        y_name : str, optional
+            column name for the y-axis. The default is None.
+        hue_str : str, optional
+            name of categorical data to color by. The default is None.
+
+        Returns
+        -------
+        None.
+        
+        eg. 
+        diamonds = sns.load_dataset('diamonds').sort_values('color')
+        myplot.sns_boxenplot(diamonds,'color','price')
+        """
+        sns.boxenplot(data=dataframe, x=x_name, y=y_name, hue=hue_str, 
+                      palette='deep')
+        plt.show()
+        
+    ##########################################################################
+    def sns_barplot(self, dataframe, x_name=None, y_name=None, hue_str=None):
+        """
+        Barplot - categorical estimatation
+
+        Parameters
+        ----------
+        dataframe : dataframe
+            data container
+        x_name : str, optional
+            column name for the x-axis. The default is None.
+        y_name : str, optional
+            column name for the y-axis. The default is None.
+        hue_str : str, optional
+            name of categorical data to color by. The default is None.
+
+        Returns
+        -------
+        None.
+        
+        eg. 
+        titanic = sns.load_dataset('titanic')
+        myplot.sns_barplot(titanic,'sex','survived','class')
+        """
+        sns.barplot(data=dataframe, x=x_name, y=y_name, hue=hue_str)        
+        plt.show()
+        
+    ##########################################################################
+    def sns_heatmap(self, data2d, data_type):
+        """
+        Heatmap of 2d data with data annotated 
+
+        Parameters
+        ----------
+        data2d : data in 2d representation
+        
+        data_type : type of data to be annotated - 'int', 'float'
+        
+        fig_size: tuple, define figure size
+
+        Returns
+        -------
+        None.
+
+        eg. 
+        flights=sns.load_dataset('flights').pivot('month','year','passengers')
+        myplt.sns_heatmap(flights,'int')
+        """
+        
+        data_string = {'int':'d','float':'0.1f'}
+
+        sns.heatmap(data2d, annot=True, linewidths=0.5,
+                    fmt=data_string[data_type])
+
         plt.show()
         
     ##########################################################################
